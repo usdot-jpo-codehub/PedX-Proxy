@@ -1,0 +1,25 @@
+2025-06-18 10:12:46.101 -05:00 [INF] User profile is available. Using 'C:\Users\C0011022\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-06-18 10:12:46.569 -05:00 [WRN] The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert.
+2025-06-18 10:12:46.605 -05:00 [WRN] Overriding address(es) 'http://localhost:9000'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-06-18 10:12:46.710 -05:00 [INF] Now listening on: https://[::]:9001
+2025-06-18 10:12:46.713 -05:00 [INF] Now listening on: http://[::]:9000
+2025-06-18 10:12:46.719 -05:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-06-18 10:12:46.722 -05:00 [INF] Hosting environment: Development
+2025-06-18 10:12:46.724 -05:00 [INF] Content root path: C:\Users\C0011022\Projects\PedX\src\Proxy
+2025-06-18 10:13:19.603 -05:00 [INF] Getting all intersections for user 'Test User'
+2025-06-18 10:13:19.619 -05:00 [INF] HTTP GET /intersections responded 200 in 81.3148 ms
+2025-06-18 10:13:39.937 -05:00 [INF] Getting intersection '85' for user 'Test User'
+2025-06-18 10:13:39.940 -05:00 [INF] HTTP GET /intersections/85 responded 200 in 25.7486 ms
+2025-06-18 10:13:50.208 -05:00 [INF] Getting all crossing states at intersection '85' for user 'Test User'
+2025-06-18 10:13:52.989 -05:00 [INF] HTTP GET /intersections/85/crossings responded 200 in 2793.8558 ms
+2025-06-18 10:14:16.005 -05:00 [INF] Getting crossing states 'NB' at intersection '85' for user 'Test User'
+2025-06-18 10:14:16.017 -05:00 [INF] HTTP GET /intersections/85/crossings/NB responded 200 in 19.4403 ms
+2025-06-18 10:14:32.166 -05:00 [INF] Getting crossing states 'NB' at intersection '85' for user 'Test User'
+2025-06-18 10:14:32.179 -05:00 [INF] HTTP GET /intersections/85/crossings/NB responded 200 in 15.4450 ms
+2025-06-18 10:14:45.356 -05:00 [INF] Calling for standard crossings 'NB' at intersection '85' for user 'Test User'
+2025-06-18 10:14:46.047 -05:00 [INF] HTTP POST /intersections/85/crossings/NB/call responded 200 in 706.2342 ms
+2025-06-18 10:15:03.930 -05:00 [INF] Calling for extended crossings 'NB' at intersection '85' for user 'Test User'
+2025-06-18 10:15:07.511 -05:00 [INF] HTTP POST /intersections/85/crossings/NB/call responded 200 in 3583.2270 ms
+2025-06-18 10:15:22.812 -05:00 [INF] Calling for standard crossings 'NB' at intersection '85' for user 'Test User'
+2025-06-18 10:15:23.427 -05:00 [INF] HTTP POST /intersections/85/crossings/NB/call responded 200 in 616.9676 ms
+2025-06-18 10:16:08.968 -05:00 [INF] Application is shutting down...

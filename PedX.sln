@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4D82D90B-754B-430D-92A1-9F7CA7EF84CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proxy", "src\Proxy\Proxy.csproj", "{BE8095E8-3510-4FED-960C-0681DC0CCCB1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{EDBF8E8E-6CE5-4306-9DD0-F33BA6A89A05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proxy.Tests", "tests\Proxy.Tests\Proxy.Tests.csproj", "{66BD5203-CD26-41E0-9E08-F7DBDAB20817}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BE8095E8-3510-4FED-960C-0681DC0CCCB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE8095E8-3510-4FED-960C-0681DC0CCCB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE8095E8-3510-4FED-960C-0681DC0CCCB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE8095E8-3510-4FED-960C-0681DC0CCCB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66BD5203-CD26-41E0-9E08-F7DBDAB20817}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66BD5203-CD26-41E0-9E08-F7DBDAB20817}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66BD5203-CD26-41E0-9E08-F7DBDAB20817}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66BD5203-CD26-41E0-9E08-F7DBDAB20817}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BE8095E8-3510-4FED-960C-0681DC0CCCB1} = {4D82D90B-754B-430D-92A1-9F7CA7EF84CF}
+		{66BD5203-CD26-41E0-9E08-F7DBDAB20817} = {EDBF8E8E-6CE5-4306-9DD0-F33BA6A89A05}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,14 @@
+﻿{
+  "Security": {
+    "ApiKeys": {
+      "secret": {
+        "Owner": "Test User",
+        "Roles": [ "reader", "caller" ]
+      },
+      "readonly": {
+        "Owner": "Test Read-Only User",
+        "Roles": [ "reader" ]
+      }
+    }
+  }
+}

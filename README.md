@@ -1,160 +1,348 @@
-# codehub-readme-template
+﻿# PedX Proxy
 
-## Summary of what a README file is:
+## Project Description
 
-A README file contains important information about the associated source code, files, dependencies and related details that make up an application. In order to leverage applications and their associated source code, members of the open source community rely on clear and concise READMEs.
+The Georgia Department of Transportation (GDOT) and Atlanta Regional Commission's (ARC) Safe Trips in a Connected Transportation Network (ST-CTN) project was selected by the U.S. Department of Transportation (USDOT) as a part of the ITS4US Deployment Program. The project seeks to enhance the traveler's complete trip travel experience by enhancing mobility, reliability, and safety for system users. This is done by leveraging innovative solutions, existing deployments and team collaboration such as integrating connected vehicle (CV) data with an open-source software-based trip planner that is used to provision web-based and mobile application user access. The trip planner will provide users with the ability to create a personalized trip plan with information regarding the navigation of physical infrastructure, the ability to resolve unexpected obstacles, and ensure users' visibility throughout the trip. The proposed deployment will provide users with the ability to dynamically plan and navigate trips.
 
-## Purpose of this template
+The PedX Proxy specifically serves as an interface that proxies external third-party REST calls to an internal network of Actuated Traffic Signal Controller units, enabling remote requests for pedestrian crossings. This initial release includes support for MaxTime intersection controllers (IC), however the proxy is designed with an extensible architecture to allow additional controller types to be integrated as required.
 
-The purpose of this README template is to provide project teams an easy template to copy-paste into their own README file for source code funded, either fully or partially, by the United States Department of Transportation (U.S. DOT) Intelligent Transportation Systems Joint Program Office (ITS JPO). This template contains elements for following the [ITS JPO Source Code Guidelines](https://its.dot.gov/code/#/source-code-guidelines) and README best practices.
+## Prerequisites
 
-The goal is for project READMEs to be compliant, clear, concise, and informative for source code users. Please note that examples of the [CONTRIBUTING.md](https://github.com/usdot-jpo-codehub/codehub-readme-template/blob/master/Contributing.MD) and [LICENSE.md](https://github.com/usdot-jpo-codehub/codehub-readme-template/blob/master/LICENSE) files required by the ITS JPO Source Code Guidelines are nested within this template. See the License and Contributions sections of this template for more details. **Please feel free to copy and paste this template into your own repository's README space.**
+The PedX Proxy requires:
 
-For a real-world example of an ITS JPO-funded project using this template, see the [STOL-AMS/TO-22-Improved-CACC](https://github.com/STOL-AMS/TO-22-Improved-CACC) repository.
+- .NET 8.0 SDK for development
+- .NET 8.0 Runtime for deployment only
 
-# README Outline:
-* Project Description
-* Prerequisites
-* Usage
-	* Building
-	* Testing
-	* Execution
-* Additional Notes
-* Version History and Retention
-* License
-* Contributions
-* Contact Information
-* Acknowledgements
+### System Requirements
 
-# Project Description
+- **Minimum Hardware Requirements**:
+  - CPU: 2 cores, 2.0 GHz or higher
+  - RAM: 2GB minimum, 4GB recommended
+  - Disk Space: 100MB for application, 500MB with logs
+  - Network: 100 Mbps Ethernet connection
 
-*Insert a description of your project, including the project's title, purpose and goals of the project, purpose of the source code, how the source code relates to the overall goals of the project, whether this source code relates to other source code in the project, and length of the project.*
+### Network Requirements
 
-Example:
+- **Inbound Access**:
+  - HTTPS (port 443) for client applications
+  - HTTP (port 80) for redirects (optional)
+- **Outbound Access**:
+  - MaxTime API endpoints on HTTPS (port 443)
+  - NTP servers (UDP port 123) for time synchronization
 
-README Template
+## Usage
 
-This project is a README template for users to copy-paste into their project's README file and fill out with their project's information in order to provide useful and relevant information to users of a repository. It is accompanied by a LICENSE and CONTRIBUTING file, linked to in the License and Contributions sections below. This project will continue indefinitely as long as the ITS JPO Source Code Guidelines are in effect.
+### Building
 
-# Prerequisites
+To build the PedX Proxy:
 
-*Detail what actions users need to take before they can stand up the project, including instructions for different environments users might have. This might include instructions and examples for installing additional software.*
+1. Clone the repository
+2. Navigate to the project directory:
+   ```
+   cd src/Proxy
+   ```
+3. Build the project:
+   ```
+   dotnet build
+   ```
 
-Example:
+### Testing
 
-Requires:
-- Java 8 (or higher)
-- Maven 3.5.4
-- Docker
+Run the automated tests:
 
-# Usage
-*Provide users with detailed instructions for how to use your software. The specifics of this section will vary between projects, but should adhere to the following minimum outline:*
-
-## Building
-*Specifics for how to build/compile this code should be outlined here. If your code does not require any type of build/compilation, specify that here.*
-
-Example: 
-
-Step 1: Build Docker image:
 ```
-docker build myproject
+dotnet test
 ```
 
-Step 2: Run Docker image:
+### Execution
+
+#### Running Locally
+
+1. Configure the application settings in the appsettings.json, security.json, and intersections.json files
+2. Run the application:
+   ```
+   dotnet run
+   ```
+3. When in development mode, you can access the API documentation at: https://localhost:5001/swagger (port may vary based on configuration)
+
+#### Deploying as a Windows Service
+
+1. Publish the application:
+   ```
+   dotnet publish -c Release
+   ```
+2. Install as a Windows Service:
+   ```
+   sc create "PedX-Proxy" binPath="path\to\Proxy.exe"
+   sc start "PedX-Proxy"
+   ```
+
+#### Deploying on Linux
+
+1. Publish the application:
+   ```
+   dotnet publish -c Release
+   ```
+2. Create a systemd service file at `/etc/systemd/system/pedx-proxy.service`:
+   ```
+   [Unit]
+   Description=PedX Proxy Service
+   After=network.target
+
+   [Service]
+   WorkingDirectory=/path/to/published/app
+   ExecStart=/usr/bin/dotnet /path/to/published/app/Proxy.dll
+   Restart=always
+   RestartSec=10
+   User=www-data
+   Environment=ASPNETCORE_ENVIRONMENT=Production
+   Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+3. Enable and start the service:
+   ```
+   sudo systemctl enable pedx-proxy.service
+   sudo systemctl start pedx-proxy.service
+   ```
+4. Check service status:
+   ```
+   sudo systemctl status pedx-proxy.service
+   ```
+
+#### Deploying with Docker
+
+1. Build the Docker image:
+   ```
+   docker build -t pedx-proxy .
+   ```
+
+2. Run the container:
+   ```
+   docker run -d -p 8080:80 -p 8443:443 \
+     -v /path/to/appsettings.json:/app/appsettings.json \
+     -v /path/to/security.json:/app/security.json \
+     -v /path/to/intersections.json:/app/intersections.json \
+     --name pedx-proxy \
+     pedx-proxy
+   ```
+
+3. Check container status:
+   ```
+   docker ps -a
+   ```
+
+4. View logs:
+   ```
+   docker logs pedx-proxy
+   ```
+
+#### Using Docker Compose
+
+Create a `docker-compose.yml` file:
+```yaml
+version: '3.8'
+
+services:
+  pedx-proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./src/Proxy/appsettings.json:/app/appsettings.json
+      - ./src/Proxy/security.json:/app/security.json
+      - ./src/Proxy/intersections.json:/app/intersections.json
+    restart: unless-stopped
 ```
-docker run myproject
-```
-## Testing
-*Specifics for how to run any test cases your project may have. If your test cases are automatically run as part of the build process, or you don't include any testing, specify that here.*
 
-Example:
-
-Run unit tests:
+Run with Docker Compose:
 ```
-/test/runUnitTests.sh
+docker-compose up -d
 ```
 
-## Execution
-*Explain how to use the final product of your code. If your code is meant to be run as is (ex: scripts), specify how to run those scripts. If your code is meant to be deployed (ex: AWS Lambda), specify how to do that.*
+## Additional Notes
 
-Example:
+The PedX Proxy provides an API for accessing pedestrian crossing data from traffic signal controllers. It uses API key authentication for security and includes comprehensive logging through Serilog.
 
-Run the script:
+### Configuration Files
+
+The PedX Proxy uses three main configuration files:
+
+#### appsettings.json
+
+This file contains general application settings including logging configuration and server endpoints.
+
+```json
+{
+  "Serilog": {
+    "Using": ["Serilog.Sinks.File"],
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft.AspNetCore.Mvc": "Warning",
+        "Microsoft.AspNetCore.Routing": "Warning",
+        "Microsoft.AspNetCore.Hosting": "Warning",
+        "System.Net.Http.HttpClient": "Warning"
+      }
+    },
+    "Enrich": ["FromLogContext"],
+    "WriteTo": [
+      {
+        "Name": "File",
+        "Args": {
+          "path": "C:/ProgramData/PED-X Proxy/Logs/proxy-.txt",
+          "rollingInterval": "Day",
+          "retainedFileCountLimit": 31
+        }
+      }
+    ]
+  },
+  "Kestrel": {
+    "Endpoints": {
+      "MyHttpEndpoint": {
+        "Url": "http://*"
+      },
+      "HttpsDefaultCert": {
+        "Url": "https://*"
+      }
+    }
+  },
+  "AllowedHosts": "*"
+}
 ```
-python /scripts/myScript.py
+
+**Configuration Options:**
+- **Serilog**: Configure logging behavior
+  - **path**: Location where log files will be saved
+  - **rollingInterval**: How often to create new log files
+  - **retainedFileCountLimit**: Number of log files to keep
+- **Kestrel**: Web server configuration
+  - **Endpoints**: Configure HTTP and HTTPS endpoints
+
+#### security.json
+
+This file contains API key configurations for securing the proxy API.
+
+```json
+{
+  "Security": {
+    "ApiKeys": {
+      "secret": {
+        "Owner": "Test User",
+        "Roles": ["reader", "caller"]
+      },
+      "readonly": {
+        "Owner": "Test Read-Only User",
+        "Roles": ["reader"]
+      }
+    }
+  }
+}
 ```
 
-Deploy to Lambda:
+**Configuration Options:**
+- **ApiKeys**: Dictionary of valid API keys
+  - Each key has an **Owner** name and a list of **Roles**
+  - Available roles:
+    - **reader**: Can access information about intersections and crossings
+    - **caller**: Can initiate pedestrian crossing requests
+
+#### intersections.json
+
+This file defines the traffic signal intersections and their pedestrian crossings.
+
+```json
+{
+  "Intersections": {
+    "241": {
+      "Description": "SR 20 at Gwinnett Drive",
+      "Controller": {
+        "Type": "MaxTime",
+        "Address": "10.10.10.10"
+      },
+      "Crossings": {
+        "NB": { "Description": "Northbound SR 20", "Phase": 2 },
+        "WB": { "Description": "Westbound Driveway", "Phase": 4 },
+        "SB": { "Description": "Southbound SR 20", "Phase": 6 },
+        "EB": { "Description": "Eastbound Gwinnett Drive", "Phase": 8 }
+      }
+    }
+  }
+}
 ```
-aws lambda create-function --function-name my-function ... 
-```
 
-# Additional Notes
-*Optional - Any additional information that would be useful to someone wanting to use this code. If there are datasets and associated Data Management Plans that interact with this source code, please provide them here*
+**Configuration Options:**
+- **Intersections**: Dictionary of intersection configurations
+  - Keys are intersection IDs (must be unique)
+  - **Description**: Human-readable description of the intersection
+  - **Controller**: Traffic signal controller configuration
+    - **Type**: Controller type (currently supports "MaxTime")
+    - **Address**: Network address of the controller
+  - **Crossings**: Dictionary of pedestrian crossings at this intersection
+    - Keys are crossing IDs (unique within an intersection)
+    - **Description**: Human-readable description of the crossing
+    - **Phase**: Signal phase number associated with this crossing
 
-Example:
+### Using Configuration Files
 
-**Known Issues:**
-* Script fails when run on Tuesdays
+1. **Installation**: 
+   - By default, the application looks for configuration files in its running directory
+   - For production deployments, place configuration files in `C:/ProgramData/PED-X Proxy/`
 
-**Associated datasets:**
-* [Associated Dataset](https://its.dot.gov/data/)
+2. **Security Best Practices**:
+   - In production, generate strong API keys (not "secret" or "readonly")
+   - Restrict API keys to specific roles based on client needs
+   - Use HTTPS with a valid SSL certificate
+   - Regularly rotate API keys for sensitive operations
 
-# Version History and Retention
-*A statement of the status of the source code (prototype, alpha, beta, release, etc.), how often users can expect activity on this repository, and a version/release history in the form of a CHANGELOG file. Additionally, include a retention statement that specifies how long this repository will remain publicly accessible*
+3. **Adding New Intersections**:
+   - To add a new intersection, add a new entry to the `Intersections` dictionary in `intersections.json`
+   - Ensure the intersection ID is unique
+   - Configure all required crossings with their proper signal phases
+   - Verify the controller address is correct and accessible from the proxy server
 
-Example:
+4. **Adding New Controller Types**:
+   - Implement a new adapter class that implements the `IAdapter` interface
+   - Register the new adapter in the `AdapterFactory`
+   - Update the `intersections.json` file to use the new controller type
 
-**Status:** This project is in the release phase.
 
-**Release Frequency:** This project is updated approximately once every 2-3 weeks
+## License
 
-**Release History: See [CHANGELOG.md](CHANGELOG.md)**
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-**Retention:** This project will remain publicly accessible for a minimum of five years (until at least 06/15/2025).
+## Contributions
 
-# License
-*Create a file named "LICENSE.md" that contains at least the licensing status of the code and the full text of the open source license or a link to where the license is officially maintained. If for some reason the source code does not use an open license, explain why. See [LICENSE.md](https://github.com/usdot-jpo-codehub/codehub-readme-template/blob/master/LICENSE) for an example of this file.*
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our Code of Conduct, the process for submitting pull requests to us, and how contributions will be released.
 
-Example:
+## Contact Information
 
-This project is licensed under the Creative Commons 1.0 Universal (CC0 1.0) License - see the [License.MD](https://github.com/usdot-jpo-codehub/codehub-readme-template/blob/master/LICENSE) for more details. 
+Contact GDOT for information about this repository
 
-# Contributions
-*Create a file named "CONTRIBUTING.md" explaining how users can interact with this project's repository, your expectations for their conduct, and how contributions by users will be released (e.g. whether they will be released under the same license and whether those contributors waive their rights accordingly). See [CONTRIBUTING.md](https://github.com/usdot-jpo-codehub/codehub-readme-template/blob/master/Contributing.MD) for an example of this file.*
+Contact Name: Victoria Coulter, GDOT  
+Contact Information: vcoulter@dot.ga.gov
 
-Example:
+## Acknowledgements
 
-Please read [CONTRIBUTING.md](https://github.com/usdot-jpo-codehub/codehub-readme-template/blob/master/Contributing.MD) for details on our Code of Conduct, the process for submitting pull requests to us, and how contributions will be released.
+**Citing this code**
 
-# Contact Information
-*Provide a primary contact and associated contact information (e.g. email and phone number) for users to contact with questions about this repository.*
-
-Example:
-
-Contact Name: ITS JPO
-Contact Information: data.itsjpo@dot.gov, (888)-888-8888
-
-# Acknowledgements
-*Describe how users should reference your code if they use it to build additional software, list the Digital Object Identifier for this project, list the sample citations for associated report/paper and for this source code, and (optional) list if you have a 3rd party or any specific contributor to give credit.*
-
-*Sample citation should be in the below format, with the `formatted fields` replaced with details of your source code*
-
-_`author_surname_or_organization`, `first_initial`. (`year`)._ `program_or_source_code_title` _(`code_version`) [Source code]. Provided by ITS CodeHub through GitHub.com. Accessed YYYY-MM-DD from `doi_url`._
-
-Example:
-
-## Citing this code
 To track how this government-funded code is used, we request that if you decide to build additional software using this code please acknowledge its Digital Object Identifier in your software's README/documentation.
 
 > Digital Object Identifier: https://doi.org/xxx.xxx/xxxx
 
 To cite this code in a publication or report, please cite our associated report/paper and/or our source code. Below is a sample citation for this code:
 
-> ITS CodeHub Team. (2021). _ITS CodeHub README Template_ (0.1) [Source code]. Provided by ITS CodeHub through GitHub.com. Accessed 2021-01-27 from https://doi.org/xxx.xxx/xxxx.
+> Georgia Department of Transportation. (2025). PedX Proxy (1.0) [Source code]. Provided by ITS CodeHub through GitHub.com. Accessed 2025-06-09 from https://doi.org/xxx.xxx/xxxx.
 
 When you copy or adapt from this code, please include the original URL you copied the source code from and date of retrieval as a comment in your code. Additional information on how to cite can be found in the [ITS CodeHub FAQ](https://its.dot.gov/code/#/faqs).
 
-## Contributors
-Shout out to [PurpleBooth](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2) for their README template.
+**Contributors**
+
+Funded by USDOT JPO under the ITS4US Deployment Program.
+
+Atlanta Regional Commission (ARC) and Georgia Department of Transportation (GDOT) - Safe Trips in a Connected Transportation Network (ST-CTN) project.
 

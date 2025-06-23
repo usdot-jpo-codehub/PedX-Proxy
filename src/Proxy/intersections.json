@@ -1,0 +1,43 @@
+﻿{
+  "Intersections": {
+    "1001": {
+      "Description": "Test Intersection 1",
+      "Controller": { 
+        "Type": "MaxTime",
+        "Address": "localhost:9002"
+      },
+      "Crossings": {
+        "NENW": { "Description": "North-East to North-West", "Phase": 2 },
+        "NWSW": { "Description": "North-West to South-West", "Phase": 4 },
+        "SWSE": { "Description": "South-West to South-East", "Phase": 6 },
+        "SENE": { "Description": "South-East to North-East", "Phase": 8 }
+      }
+    },
+    "1002": {
+      "Description": "Test Intersection 2",
+      "Controller": {
+        "Type": "MaxTime",
+        "Address": "localhost:9002"
+      },
+      "Crossings": {
+        "NENW": { "Description": "North-East to North-West", "Phase": 2 },
+        "NWSW": { "Description": "North-West to South-West", "Phase": 4 },
+        "SWSE": { "Description": "South-West to South-East", "Phase": 6 },
+        "SENE": { "Description": "South-East to North-East", "Phase": 8 }
+      }
+    },
+    "1003": {
+      "Description": "Test Intersection 3",
+      "Controller": {
+        "Type": "MaxTime",
+        "Address": "localhost:9002"
+      },
+      "Crossings": {
+        "NENW": { "Description": "North-East to North-West", "Phase": 2 },
+        "NWSW": { "Description": "North-West to South-West", "Phase": 4 },
+        "SWSE": { "Description": "South-West to South-East", "Phase": 6 },
+        "SENE": { "Description": "South-East to North-East", "Phase": 8 }
+      }
+    }
+  }
+}
